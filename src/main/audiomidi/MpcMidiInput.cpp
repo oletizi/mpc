@@ -2,11 +2,15 @@
 
 #include <Mpc.hpp>
 #include <hardware/Hardware.hpp>
+#include <hardware/HwComponent.hpp>
+#include <hardware/DataWheel.hpp>
 #include <hardware/HwSlider.hpp>
 #include <audiomidi/EventHandler.hpp>
 #include <audiomidi/MpcMidiPorts.hpp>
 #include <controls/BaseControls.hpp>
+#include <controls/GlobalReleaseControls.hpp>
 #include <controls/Controls.hpp>
+#include <controls/MidiMapping.hpp>
 
 #include <lcdgui/LayeredScreen.hpp>
 #include <lcdgui/Screens.hpp>
@@ -73,13 +77,58 @@ void MpcMidiInput::transport(MidiMessage* msg, int timeStamp)
         if (controller == 7)
             mpc.getHardware().lock()->getSlider().lock()->setValue(value);
     }
-	
+    
 	auto lSequencer = sequencer.lock();
 	
 	auto isPolyPressure = status >= ShortMessage::POLY_PRESSURE && status < ShortMessage::POLY_PRESSURE + 16;
 	auto isNoteOn = status >= ShortMessage::NOTE_ON && status < ShortMessage::NOTE_ON + 16;
 	auto isNoteOff = status >= ShortMessage::NOTE_OFF && status < ShortMessage::NOTE_OFF + 16;
 
+    if (channel == 15 /* && totalMidiControlEnabled */ && (isNoteOn || isNoteOff))
+    {
+        auto midiMapping = mpc.getControls().lock()->getMidiMapping().lock();
+        
+        auto data1 = shortMsg->getData1();
+        auto data2 = shortMsg->getData2();
+
+        auto label = midiMapping->getLabelFromValue(data1);
+
+        if (label.length() == 0)
+            return;
+                
+        if (label.compare("datawheel-up") == 0)
+        {
+//            mpc.getHardware().lock()->getDataWheel().lock()->turn(data2);
+            if (isNoteOn)
+                mpc.getActiveControls().lock()->turnWheel(data2);
+        }
+        else if (label.compare("datawheel-down") == 0)
+        {
+//            mpc.getHardware().lock()->getDataWheel().lock()->turn(- data2);
+            if (isNoteOn)
+            mpc.getActiveControls().lock()->turnWheel(- data2);
+        }
+        else if ((label.length() == 5 || label.length() == 6) && label.find("pad-") != string::npos)
+        {
+            auto padIndex = stoi(label.substr(4)) - 1;
+            
+            if (isNoteOn)
+                mpc.getActiveControls().lock()->pad(padIndex, data2, false, 0);
+            else
+                mpc.getReleaseControls()->simplePad(padIndex);
+        }
+        else
+        {
+            auto hwComponent = mpc.getHardware().lock()->getComponentByLabel(label).lock();
+            
+            if (isNoteOn)
+                hwComponent->push();
+            else
+                hwComponent->release();
+        }
+        return;
+    }
+    
 	if (isPolyPressure ||
 		isNoteOn ||
 		isNoteOff)

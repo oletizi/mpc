@@ -61,7 +61,7 @@ void KbMapping::importMapping()
     
     if (!f.exists())
     {
-        MLOG("No keys.txt mapping found in vMPC/resources. Initializing default mapping...");
+        MLOG("No keys.txt mapping found in vMPC/resources. Initializing default keyboard mapping...");
         initializeDefaults();
         return;
     }

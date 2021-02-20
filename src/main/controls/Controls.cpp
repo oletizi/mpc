@@ -3,6 +3,7 @@
 #include "KeyEventHandler.hpp"
 
 #include "KbMapping.hpp"
+#include "MidiMapping.hpp"
 
 #include <Mpc.hpp>
 
@@ -19,6 +20,7 @@ Controls::Controls(mpc::Mpc& mpc)
 	controls["release"] = new GlobalReleaseControls(mpc);
     keyEventHandler = make_shared<KeyEventHandler>(mpc);
     kbMapping = make_shared<KbMapping>();
+    midiMapping = make_shared<MidiMapping>();
 }
 
 weak_ptr<KeyEventHandler> Controls::getKeyEventHandler()
@@ -197,12 +199,15 @@ GlobalReleaseControls* Controls::getReleaseControls()
 Controls::~Controls()
 {
 	for (auto c : controls)
-	{
 		delete c.second;
-	}
 }
 
 weak_ptr<KbMapping> Controls::getKbMapping()
 {
     return kbMapping;
+}
+
+weak_ptr<MidiMapping> Controls::getMidiMapping()
+{
+    return midiMapping;
 }
