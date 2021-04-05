@@ -71,6 +71,17 @@ void VmpcBackupDeleteOldFilesScreen::determineAvailableActions()
     // Delete permanently
     actionAvailability[4] = programFiles1Exists || programFiles2Exists || applicationExists;
     actionAvailability[5] = vmpcDirExists;
+    
+    // Set recommended actions. When the below are available,
+    // default to YES.
+    actionValues[0] = storeExists;
+    actionValues[1] = keysExists;
+    actionValues[2] = nvramExists;
+    actionValues[3] = vmpcSpecificExists;
+    
+    // Never delete by default
+    actionValues[4] = false;
+    actionValues[5] = false;
 }
 
 void VmpcBackupDeleteOldFilesScreen::function(int i)
@@ -79,9 +90,39 @@ void VmpcBackupDeleteOldFilesScreen::function(int i)
 
 	switch (i)
     {
-    case 3:
-        openScreen("vmpc-clean");
-        break;
+        case 3:
+            openScreen("vmpc-clean");
+            break;
+        case 4:
+            if (find(begin(actionAvailability), end(actionAvailability), true) == end(actionAvailability))
+            {
+                return;
+            }
+            
+            // Delete old application
+            if (actionValues[4])
+            {
+#ifdef __WIN32
+                auto programFilesPath1 = "C:/Program Files/vMPC";
+                auto programFilesPath2 = "C:/Program Files (x86)/vMPC";
+                auto programFiles1 = make_shared<Directory>(programFilesPath1);
+                auto programFiles2 = make_shared<Directory>(programFilesPath2);
+
+                if (programFiles1->exists())
+                    Directory::deleteRecursive(programFiles1);
+                if (programFiles2->exists())
+                    Directory::deleteRecursive(programFiles2);
+
+#elif defined __APPLE__
+                auto applicationPath = "/Applications/vMPC.app";
+                auto application = make_shared<Directory>(applicationPath);
+                
+                if (application->exists())
+                    Directory::deleteRecursive(application);
+#endif
+            }
+            
+            break;
     }
 }
 
@@ -138,6 +179,10 @@ void VmpcBackupDeleteOldFilesScreen::down()
 
 void VmpcBackupDeleteOldFilesScreen::displayActions()
 {
+    auto hideDoIt = find(begin(actionValues), end(actionValues), true) == end(actionValues);
+    
+    findChild<FunctionKey>("fk4").lock()->Hide(hideDoIt);
+    
     if (yOffset == 0)
         findBackground().lock()->setName("vmpc-backup-delete-old-files-down");
     else if (yOffset > 0 && yOffset < actionNames.size() - 4)
