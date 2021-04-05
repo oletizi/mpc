@@ -145,6 +145,9 @@ void TextComp::Draw(std::vector<std::vector<bool>>* pixels)
 					if (h <= 7)
 						ypos--;
 
+                    if (xpos > 247)
+                        continue;
+                    
 					(*pixels)[xpos][ypos] = inverted ? false : true;
 
 					if (field != nullptr && field->isSplit())

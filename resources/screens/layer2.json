@@ -877,7 +877,7 @@
  	"action2", [ "_", "_", "action1", "action3" ],
  	"action3", [ "_", "_", "action2", "_" ]
  ],
- "x" : [ 18, 18, 18, 18 ],
+ "x" : [ 20, 20, 20, 20 ],
  "y" : [ 11, 21, 31, 41 ],
  "tfsize" : [ 18, 18, 18, 18 ],
  "fblabels" : [ null, null, null, "CLOSE", "DO IT", null ],
