@@ -33,8 +33,6 @@ public:
     std::shared_ptr<ScreenComponent> getScreenComponent(const std::string& screenName);
     
 private:
-    static std::vector<std::string> zoomScreenNames;
-    
     mpc::Mpc& mpc;
     
     void init();

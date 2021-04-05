@@ -9,6 +9,7 @@
 #include <lcdgui/ScreenComponent.hpp>
 
 #include <lcdgui/screens/StaticScreen.hpp>
+#include <lcdgui/screens/CancelOkScreen.hpp>
 
 #include <lcdgui/screens/SequencerScreen.hpp>
 #include <lcdgui/screens/AssignScreen.hpp>
@@ -111,6 +112,7 @@
 #include <lcdgui/screens/window/IgnoreTempoChangeScreen.hpp>
 #include <lcdgui/screens/window/LoopSongScreen.hpp>
 #include <lcdgui/screens/window/LoopSongScreen.hpp>
+#include <lcdgui/screens/window/VmpcBackupDeleteOldFilesScreen.hpp>
 
 #include <lcdgui/screens/dialog/MetronomeSoundScreen.hpp>
 #include <lcdgui/screens/dialog/MidiMonitorScreen.hpp>
@@ -148,6 +150,7 @@
 #include <lcdgui/screens/VmpcSettingsScreen.hpp>
 #include <lcdgui/screens/VmpcKeyboardScreen.hpp>
 #include <lcdgui/screens/VmpcAutoSaveScreen.hpp>
+#include <lcdgui/screens/VmpcCleanScreen.hpp>
 
 #include <lcdgui/screens/window/VmpcDirectToDiskRecorderScreen.hpp>
 #include <lcdgui/screens/window/VmpcRecordingFinishedScreen.hpp>
@@ -381,6 +384,14 @@ shared_ptr<ScreenComponent> Screens::getScreenComponent(const string& screenName
 	auto children = arrangement.first;
 	auto transferMap = arrangement.second;
 
+    const static vector<string> cancelOkScreens = {
+        "vmpc-backup-old-user-data",
+        "vmpc-this-will-delete",
+        "vmpc-old-vmpc-deleted",
+        "vmpc-backup-successful",
+        "vmpc-backup-failed"
+    };
+    
 	if (screenName.compare("sequencer") == 0)
 	{
 		screen = make_shared<SequencerScreen>(mpc, layerIndex);
@@ -935,6 +946,19 @@ shared_ptr<ScreenComponent> Screens::getScreenComponent(const string& screenName
     else if (screenName.compare("midi-sw") == 0)
     {
         screen = make_shared<MidiSwScreen>(mpc, layerIndex);
+    }
+    else if (screenName.compare("vmpc-clean") == 0)
+    {
+        screen = make_shared<VmpcCleanScreen>(mpc, layerIndex);
+    }
+    else if (find(begin(cancelOkScreens), end(cancelOkScreens), screenName) != end(cancelOkScreens))
+    {
+        screen = make_shared<CancelOkScreen>(mpc);
+        screen->findChild<Background>("").lock()->setName(screenName);
+    }
+    else if (screenName.compare("vmpc-backup-delete-old-files") == 0)
+    {
+        screen = make_shared<VmpcBackupDeleteOldFilesScreen>(mpc, layerIndex);
     }
     
 	if (screen)

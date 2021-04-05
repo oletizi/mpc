@@ -47,7 +47,7 @@ using namespace moduru::file;
 #ifdef _WIN32
 #include <filesystem>
 namespace fs = std::filesystem;
-#else
+#elif defined __APPLE__
 #include <thirdp/filesystem.hpp>
 namespace fs = ghc::filesystem;
 #endif
@@ -147,7 +147,7 @@ void Mpc::init(const int sampleRate, const int inputCount, const int outputCount
 
     layeredScreen->openScreen("sequencer");
 
-	MLOG("Mpc is ready")
+    MLOG("Mpc is ready")
 }
 
 weak_ptr<controls::Controls> Mpc::getControls()

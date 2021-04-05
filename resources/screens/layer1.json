@@ -599,17 +599,17 @@
  "y" : [ 5, 16 ],
  "parameters" : [ "initial-pad-mapping", "16-levels-erase-mode" ],
  "tfsize" : [ 60, 108 ],
- "fblabels" : [ "SETNGS", "KEYBRD", "AUTSAV", null, null, null ],
- "fbtypes" : [ 2, 0, 0, null, null, null ]
+ "fblabels" : [ "SETNGS", "KEYBRD", "AUTSAV", "CLEAN", null, null ],
+ "fbtypes" : [ 2, 0, 0, 0, null, null ]
 },
 "vmpc-keyboard":
 {
  "fblabels" : [
  ["SETNGS", "KEYBRD", "AUTSAV", "LEARN", "RESET", "SAVE" ],
- ["SETNGS", "KEYBRD", "CANCEL", "ACCEPT", null, null ]],
+ [ null, null, "CANCEL", "ACCEPT", null, null ]],
  "fbtypes" : [
  [ 0, 2, 0, 1, 1, 1 ],
- [ 0, 2, 1, 1, null, null ]]
+ [ null, null, 1, 1, null, null ]]
 },
 "vmpc-auto-save":
 {
@@ -625,7 +625,17 @@
  "infosize" : [ 168 ],
  "infox" : [ 45 ],
  "infoy" : [ 37 ],
- "fblabels" : [ "SETNGS", "KEYBRD", "AUTSAV", null, null, null ],
- "fbtypes" : [ 0, 0, 2, null, null, null ]
+ "fblabels" : [ "SETNGS", "KEYBRD", "AUTSAV", "CLEAN", null, null ],
+ "fbtypes" : [ 0, 0, 2, 0, null, null ]
+},
+"vmpc-clean":
+{
+ "labels" : [ "Show on startup:" ],
+ "parameters" : [ "show-on-startup" ],
+ "x" : [ 55 ],
+ "y" : [ 40 ],
+ "tfsize" : [ 18 ],
+ "fblabels" : [ "SETNGS", "KEYBRD", "AUTSAV", "CLEAN", null, null ],
+ "fbtypes" : [ 0, 0, 0, 2, null, null ]
 }
 }

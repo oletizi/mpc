@@ -863,5 +863,24 @@
 {
  "fblabels": [ null, null, null, "STAY", "DISCRD", "SAVE" ],
  "fbtypes": [ null, null, null, 0, 1, 1 ]
+},
+"vmpc-backup-delete-old-files":
+{
+ "labels" : [
+ 	 "Import VMPC specific settings:",
+ 	 "Import VMPC specific settings:",
+ 	 "Import VMPC specific settings:",
+ 	 "Import VMPC specific settings:"],
+ "parameters" : [
+ 	"action0", [ "_", "_", "_", "action1" ],
+ 	"action1", [ "_", "_", "action0", "action2" ],
+ 	"action2", [ "_", "_", "action1", "action3" ],
+ 	"action3", [ "_", "_", "action2", "_" ]
+ ],
+ "x" : [ 18, 18, 18, 18 ],
+ "y" : [ 11, 21, 31, 41 ],
+ "tfsize" : [ 18, 18, 18, 18 ],
+ "fblabels" : [ null, null, null, "CLOSE", "DO IT", null ],
+ "fbtypes" : [ null, null, null, 0, 1, null ]
 }
 }

@@ -107,7 +107,7 @@ void NvRam::loadVmpcSettings(mpc::Mpc& mpc)
 
     auto audioMidiServices  = mpc.getAudioMidiServices().lock();
 
-    if (!file.exists() || file.getLength() != 7)
+    if (!file.exists())
     {
         audioMidiServices->setRecordLevel(DEFAULT_REC_GAIN);
         audioMidiServices->setMasterLevel(DEFAULT_MAIN_VOLUME);
@@ -117,15 +117,33 @@ void NvRam::loadVmpcSettings(mpc::Mpc& mpc)
     auto vmpcSettingsScreen = mpc.screens->get<VmpcSettingsScreen>("vmpc-settings");
     auto vmpcAutoSaveScreen = mpc.screens->get<VmpcAutoSaveScreen>("vmpc-auto-save");
     
-    vector<char> bytes(7);
+    auto length = file.getLength();
+    vector<char> bytes(length);
     file.getData(&bytes);
     
-    vmpcSettingsScreen->initialPadMapping = bytes[0];
-    vmpcSettingsScreen->_16LevelsEraseMode = bytes[1];
-    vmpcAutoSaveScreen->autoSaveOnExit = bytes[2];
-    vmpcAutoSaveScreen->autoLoadOnStart = bytes[3];
-    audioMidiServices->setRecordLevel(bytes[4]);
-    audioMidiServices->setMasterLevel(bytes[5]);
-    mpc.getHardware().lock()->getSlider().lock()->setValue(bytes[6]);
+    if (length > 0)
+        vmpcSettingsScreen->initialPadMapping = bytes[0];
+    
+    if (length > 1)
+        vmpcSettingsScreen->_16LevelsEraseMode = bytes[1];
+    
+    if (length > 2)
+        vmpcAutoSaveScreen->autoSaveOnExit = bytes[2];
+    
+    if (length > 3)
+        vmpcAutoSaveScreen->autoLoadOnStart = bytes[3];
+    
+    if (length > 4)
+        audioMidiServices->setRecordLevel(bytes[4]);
+    else
+        audioMidiServices->setRecordLevel(DEFAULT_REC_GAIN);
+    
+    if (length > 5)
+        audioMidiServices->setMasterLevel(bytes[5]);
+    else
+        audioMidiServices->setMasterLevel(DEFAULT_MAIN_VOLUME);
+    
+    if (length > 6)
+        mpc.getHardware().lock()->getSlider().lock()->setValue(bytes[6]);
     
 }

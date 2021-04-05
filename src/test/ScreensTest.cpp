@@ -60,10 +60,9 @@ vector<string> screenNames = {
 "assign",
 "track-mute",
 "next-seq-pad",
-"audio",
-"audio_no_start",
 "midi",
 "vmpc-settings",
+"vmpc-clean",
 "vmpc-direct-to-disk-recorder",
 "vmpc-recording-finished",
 "vmpc-record-jam",
@@ -167,10 +166,13 @@ SCENARIO("All screens can be opened", "[gui]") {
 	GIVEN("An initialized Mpc with an initialized Sequence") {
 		mpc::Mpc mpc;
 		mpc.init(44100, 1, 5);
-		mpc.getDisk().lock()->moveForward("TEST1");
-		mpc.getDisk().lock()->initFiles();
+        auto disk = mpc.getDisk().lock();
+        disk->moveForward("DEMOS");
+        disk->initFiles();
+		disk->moveForward("TEST1");
+		disk->initFiles();
 
-		auto f = mpc.getDisk().lock()->getFile("BASIC_KIT.APS");
+		auto f = disk->getFile("BASIC_KIT.APS");
 		
 		auto apsLoader = mpc::disk::ApsLoader(mpc, f);
 
