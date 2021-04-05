@@ -104,39 +104,41 @@ void VmpcBackupDeleteOldFilesScreen::function(int i)
             // Delete old application
             if (actionValues[4])
             {
-#ifdef __WIN32
-                auto programFilesPath1 = "C:/Program Files/vMPC";
-                auto programFilesPath2 = "C:/Program Files (x86)/vMPC";
-                auto programFiles1 = make_shared<Directory>(programFilesPath1);
-                auto programFiles2 = make_shared<Directory>(programFilesPath2);
-
-                if (programFiles1->exists())
-                    Directory::deleteRecursive(programFiles1);
-                if (programFiles2->exists())
-                    Directory::deleteRecursive(programFiles2);
-                
-                openScreen("vmpc-clean");
-                
-#elif defined __APPLE__
                 auto cancelOkScreen = mpc.screens->get<CancelOkScreen>("vmpc-delete-old-vmpc-application");
-                
-                std::function<void()> cancelAction = [&]() {
+
+                auto cancelAction = [&]() {
                     openScreen("vmpc-backup-delete-old-files");
                 };
                 
-                std::function<void()> okAction = [&]() {
-                auto applicationPath = "/Applications/vMPC.app/";
-                auto application = make_shared<Directory>(applicationPath);
-                if (application->exists())
-                    Directory::deleteRecursive(application);
-                openScreen("vmpc-clean");
+#ifdef __WIN32
+                auto okAction = [&]() {
+                    auto programFilesPath1 = "C:/Program Files/vMPC";
+                    auto programFilesPath2 = "C:/Program Files (x86)/vMPC";
+                    auto programFiles1 = make_shared<Directory>(programFilesPath1);
+                    auto programFiles2 = make_shared<Directory>(programFilesPath2);
+                    
+                    if (programFiles1->exists())
+                        Directory::deleteRecursive(programFiles1);
+                    if (programFiles2->exists())
+                        Directory::deleteRecursive(programFiles2);
+                    
+                    openScreen("vmpc-clean");
+                }
+#elif defined __APPLE__
+                auto okAction = [&]() {
+                    auto applicationPath = "/Applications/vMPC.app/";
+                    auto application = make_shared<Directory>(applicationPath);
+                    
+                    if (application->exists())
+                        Directory::deleteRecursive(application);
+                    
+                    openScreen("vmpc-clean");
                 };
-                
+#endif
                 cancelOkScreen->setCancelAction(cancelAction);
                 cancelOkScreen->setOkAction(okAction);
                 
                 openScreen("vmpc-delete-old-vmpc-application");
-#endif
             }
             
             break;
