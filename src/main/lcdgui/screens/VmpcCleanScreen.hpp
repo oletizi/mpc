@@ -1,6 +1,10 @@
 #pragma once
 #include <lcdgui/ScreenComponent.hpp>
 
+namespace mpc { class Mpc; }
+
+namespace mpc::nvram { class NvRam; }
+
 namespace mpc::lcdgui::screens
 {
 class VmpcCleanScreen
@@ -15,12 +19,18 @@ public:
     void open() override;
     void function(int) override;
     void openWindow() override;
-    
+        
 private:
     bool showOnStartup = true;
     bool oldFilesFound = false;
+    
     void setShowOnStartup(bool);
+    void initOldFilesFound();
+    
     void displayShowOnStartup();
+    
+    friend class mpc::Mpc;
+    friend class mpc::nvram::NvRam;
     
 };
 }

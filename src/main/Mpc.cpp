@@ -32,6 +32,7 @@
 
 #include <lcdgui/Screens.hpp>
 #include <lcdgui/screens/LoadScreen.hpp>
+#include <lcdgui/screens/VmpcCleanScreen.hpp>
 #include <lcdgui/screens/window/LoadAProgramScreen.hpp>
 
 #include <file/Directory.hpp>
@@ -145,7 +146,12 @@ void Mpc::init(const int sampleRate, const int inputCount, const int outputCount
 	for (auto& screenName : screenNames)
         screens->get<ScreenComponent>(screenName);
 
-    layeredScreen->openScreen("sequencer");
+    auto cleanScreen = screens->get<VmpcCleanScreen>("vmpc-clean");
+    
+    if (cleanScreen->showOnStartup && cleanScreen->oldFilesFound)
+        layeredScreen->openScreen("vmpc-clean");
+    else
+        layeredScreen->openScreen("sequencer");
 
     MLOG("Mpc is ready")
 }

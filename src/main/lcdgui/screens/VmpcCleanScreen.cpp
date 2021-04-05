@@ -12,12 +12,11 @@ using namespace std;
 VmpcCleanScreen::VmpcCleanScreen(mpc::Mpc& mpc, const int layerIndex)
 	: ScreenComponent(mpc, "vmpc-clean", layerIndex)
 {
+    initOldFilesFound();
 }
 
-void VmpcCleanScreen::open()
+void VmpcCleanScreen::initOldFilesFound()
 {
-    findChild<Field>("show-on-startup").lock()->setAlignment(Alignment::Centered);
-
     auto home = moduru::sys::Home::get();
     auto sep = FileUtil::getSeparator();
     
@@ -33,6 +32,13 @@ void VmpcCleanScreen::open()
     auto applicationExists = Directory(applicationPath).exists();
     
     oldFilesFound = vmpcDirExists || programFiles1Exists || programFiles2Exists || applicationExists;
+}
+
+void VmpcCleanScreen::open()
+{
+    findChild<Field>("show-on-startup").lock()->setAlignment(Alignment::Centered);
+
+    initOldFilesFound();
     
     auto bgName = oldFilesFound ? "vmpc-clean" : "vmpc-clean-no-files";
     

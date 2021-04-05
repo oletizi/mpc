@@ -8,6 +8,7 @@
 #include <lcdgui/screens/UserScreen.hpp>
 #include <lcdgui/screens/VmpcSettingsScreen.hpp>
 #include <lcdgui/screens/VmpcAutoSaveScreen.hpp>
+#include <lcdgui/screens/VmpcCleanScreen.hpp>
 
 #include <audiomidi/AudioMidiServices.hpp>
 
@@ -74,8 +75,10 @@ void NvRam::saveUserScreenValues(mpc::Mpc& mpc)
 
 void NvRam::saveVmpcSettings(mpc::Mpc& mpc)
 {
-    auto vmpcSettingsScreen = mpc.screens->get<VmpcSettingsScreen>("vmpc-settings");
-    auto vmpcAutoSaveScreen = mpc.screens->get<VmpcAutoSaveScreen>("vmpc-auto-save");
+    auto settingsScreen = mpc.screens->get<VmpcSettingsScreen>("vmpc-settings");
+    auto autoSaveScreen = mpc.screens->get<VmpcAutoSaveScreen>("vmpc-auto-save");
+    auto cleanScreen = mpc.screens->get<VmpcCleanScreen>("vmpc-clean");
+    
     auto audioMidiServices  = mpc.getAudioMidiServices().lock();
     string fileName = mpc::Paths::configPath() + "vmpc-specific.ini";
     
@@ -87,13 +90,14 @@ void NvRam::saveVmpcSettings(mpc::Mpc& mpc)
     auto stream = FileUtil::ofstreamw(fileName, ios::binary | ios::out);
 
     vector<char> bytes{
-        (char) (vmpcSettingsScreen->initialPadMapping),
-        (char) (vmpcSettingsScreen->_16LevelsEraseMode),
-        (char) (vmpcAutoSaveScreen->autoSaveOnExit),
-        (char) (vmpcAutoSaveScreen->autoLoadOnStart),
+        (char) (settingsScreen->initialPadMapping),
+        (char) (settingsScreen->_16LevelsEraseMode),
+        (char) (autoSaveScreen->autoSaveOnExit),
+        (char) (autoSaveScreen->autoLoadOnStart),
         (char) (audioMidiServices->getRecordLevel()),
         (char) (audioMidiServices->getMasterLevel()),
-        (char) (mpc.getHardware().lock()->getSlider().lock()->getValue())
+        (char) (mpc.getHardware().lock()->getSlider().lock()->getValue()),
+        (char) (cleanScreen->showOnStartup)
     };
     
     stream.write(&bytes[0], bytes.size());
@@ -114,24 +118,25 @@ void NvRam::loadVmpcSettings(mpc::Mpc& mpc)
         return;
     }
     
-    auto vmpcSettingsScreen = mpc.screens->get<VmpcSettingsScreen>("vmpc-settings");
-    auto vmpcAutoSaveScreen = mpc.screens->get<VmpcAutoSaveScreen>("vmpc-auto-save");
+    auto settingsScreen = mpc.screens->get<VmpcSettingsScreen>("vmpc-settings");
+    auto autoSaveScreen = mpc.screens->get<VmpcAutoSaveScreen>("vmpc-auto-save");
+    auto cleanScreen = mpc.screens->get<VmpcCleanScreen>("vmpc-clean");
     
     auto length = file.getLength();
     vector<char> bytes(length);
     file.getData(&bytes);
     
     if (length > 0)
-        vmpcSettingsScreen->initialPadMapping = bytes[0];
+        settingsScreen->initialPadMapping = bytes[0];
     
     if (length > 1)
-        vmpcSettingsScreen->_16LevelsEraseMode = bytes[1];
+        settingsScreen->_16LevelsEraseMode = bytes[1];
     
     if (length > 2)
-        vmpcAutoSaveScreen->autoSaveOnExit = bytes[2];
+        autoSaveScreen->autoSaveOnExit = bytes[2];
     
     if (length > 3)
-        vmpcAutoSaveScreen->autoLoadOnStart = bytes[3];
+        autoSaveScreen->autoLoadOnStart = bytes[3];
     
     if (length > 4)
         audioMidiServices->setRecordLevel(bytes[4]);
@@ -145,5 +150,8 @@ void NvRam::loadVmpcSettings(mpc::Mpc& mpc)
     
     if (length > 6)
         mpc.getHardware().lock()->getSlider().lock()->setValue(bytes[6]);
+    
+    if (length > 7)
+        cleanScreen->setShowOnStartup(bytes[7]);
     
 }
