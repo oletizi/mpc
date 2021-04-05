@@ -1,6 +1,6 @@
 #include "CancelOkScreen.hpp"
 
-using namespace mpc::lcdgui::screens;
+using namespace mpc::lcdgui::screens::window;
 using namespace std;
 
 CancelOkScreen::CancelOkScreen(mpc::Mpc& mpc)
@@ -36,5 +36,5 @@ void CancelOkScreen::setCancelAction(std::function<void()> f)
 
 void CancelOkScreen::setOkAction(std::function<void()> f)
 {
-    cancelAction = f;
+    okAction = f;
 }

@@ -3,7 +3,7 @@
 
 #include <functional>
 
-namespace mpc::lcdgui::screens
+namespace mpc::lcdgui::screens::window
 {
 	class CancelOkScreen
 		: public mpc::lcdgui::ScreenComponent

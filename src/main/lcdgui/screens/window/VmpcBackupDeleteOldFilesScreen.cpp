@@ -1,5 +1,7 @@
 #include "VmpcBackupDeleteOldFilesScreen.hpp"
 
+#include <lcdgui/screens/window/CancelOkScreen.hpp>
+
 #include <sys/Home.hpp>
 #include <file/FileUtil.hpp>
 #include <file/Directory.hpp>
@@ -112,13 +114,28 @@ void VmpcBackupDeleteOldFilesScreen::function(int i)
                     Directory::deleteRecursive(programFiles1);
                 if (programFiles2->exists())
                     Directory::deleteRecursive(programFiles2);
-
-#elif defined __APPLE__
-                auto applicationPath = "/Applications/vMPC.app";
-                auto application = make_shared<Directory>(applicationPath);
                 
+                openScreen("vmpc-clean");
+                
+#elif defined __APPLE__
+                auto cancelOkScreen = mpc.screens->get<CancelOkScreen>("vmpc-delete-old-vmpc-application");
+                
+                std::function<void()> cancelAction = [&]() {
+                    openScreen("vmpc-backup-delete-old-files");
+                };
+                
+                std::function<void()> okAction = [&]() {
+                auto applicationPath = "/Applications/vMPC.app/";
+                auto application = make_shared<Directory>(applicationPath);
                 if (application->exists())
                     Directory::deleteRecursive(application);
+                openScreen("vmpc-clean");
+                };
+                
+                cancelOkScreen->setCancelAction(cancelAction);
+                cancelOkScreen->setOkAction(okAction);
+                
+                openScreen("vmpc-delete-old-vmpc-application");
 #endif
             }
             

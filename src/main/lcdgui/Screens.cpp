@@ -9,7 +9,6 @@
 #include <lcdgui/ScreenComponent.hpp>
 
 #include <lcdgui/screens/StaticScreen.hpp>
-#include <lcdgui/screens/CancelOkScreen.hpp>
 
 #include <lcdgui/screens/SequencerScreen.hpp>
 #include <lcdgui/screens/AssignScreen.hpp>
@@ -113,6 +112,8 @@
 #include <lcdgui/screens/window/LoopSongScreen.hpp>
 #include <lcdgui/screens/window/LoopSongScreen.hpp>
 #include <lcdgui/screens/window/VmpcBackupDeleteOldFilesScreen.hpp>
+
+#include <lcdgui/screens/window/CancelOkScreen.hpp>
 
 #include <lcdgui/screens/dialog/MetronomeSoundScreen.hpp>
 #include <lcdgui/screens/dialog/MidiMonitorScreen.hpp>
@@ -389,7 +390,8 @@ shared_ptr<ScreenComponent> Screens::getScreenComponent(const string& screenName
         "vmpc-this-will-delete",
         "vmpc-old-vmpc-deleted",
         "vmpc-backup-successful",
-        "vmpc-backup-failed"
+        "vmpc-backup-failed",
+        "vmpc-delete-old-vmpc-application"
     };
     
 	if (screenName.compare("sequencer") == 0)
