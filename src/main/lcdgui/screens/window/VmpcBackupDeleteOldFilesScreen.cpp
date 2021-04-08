@@ -110,20 +110,20 @@ void VmpcBackupDeleteOldFilesScreen::function(int i)
                     openScreen("vmpc-backup-delete-old-files");
                 };
                 
-#ifdef __WIN32
+#ifdef _WIN32
                 auto okAction = [&]() {
                     auto programFilesPath1 = "C:/Program Files/vMPC";
                     auto programFilesPath2 = "C:/Program Files (x86)/vMPC";
                     auto programFiles1 = make_shared<Directory>(programFilesPath1);
                     auto programFiles2 = make_shared<Directory>(programFilesPath2);
-                    
+
                     if (programFiles1->exists())
                         Directory::deleteRecursive(programFiles1);
                     if (programFiles2->exists())
                         Directory::deleteRecursive(programFiles2);
-                    
+
                     openScreen("vmpc-clean");
-                }
+                };
 #elif defined __APPLE__
                 auto okAction = [&]() {
                     auto applicationPath = "/Applications/vMPC.app/";
